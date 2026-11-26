@@ -1,0 +1,21 @@
+{% extends "customer/_dasar.html" %}
+{% load kantin %}
+{% block title %}Pembayaran — Kantin ITB{% endblock %}
+{% block content %}
+  <h1 class="text-2xl font-bold mb-4">Pembayaran</h1>
+  <div class="card bg-base-100 shadow-sm max-w-md mx-auto">
+    <div class="card-body items-center text-center gap-3">
+      <p class="opacity-70">Meja {{ meja }} · {{ baris|length }} jenis menu</p>
+      <p class="text-3xl font-bold">{{ total|rupiah }}</p>
+      <div class="w-48 h-48 border-4 border-dashed border-base-300 rounded-box flex items-center justify-center text-sm opacity-70">
+        QRIS (simulasi)
+      </div>
+      <p class="text-sm opacity-70">Simulasi pembayaran online. Pilih hasilnya di bawah.</p>
+      <form method="post" class="flex gap-2 w-full">{% csrf_token %}
+        <button name="hasil" value="berhasil" class="btn btn-success flex-1">Pembayaran berhasil</button>
+        <button name="hasil" value="gagal" class="btn btn-error btn-outline flex-1">Gagal</button>
+      </form>
+      <a href="{% url 'customer:keranjang' %}" class="btn btn-ghost btn-sm">Kembali ke keranjang</a>
+    </div>
+  </div>
+{% endblock %}

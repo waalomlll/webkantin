@@ -1,0 +1,14 @@
+{% extends "customer/_dasar.html" %}
+{% block title %}Masuk — Kantin ITB{% endblock %}
+{% block content %}
+  <div class="card bg-base-100 shadow-sm max-w-sm mx-auto">
+    <form method="post" class="card-body gap-3">{% csrf_token %}
+      <h1 class="card-title">Masuk</h1>
+      {% if form.errors %}<div class="alert alert-error"><span>Username atau password salah.</span></div>{% endif %}
+      <input type="hidden" name="next" value="{{ next|default:request.GET.next }}">
+      <input name="username" placeholder="Username" required class="input input-bordered w-full" autocomplete="username">
+      <input name="password" type="password" placeholder="Password" required class="input input-bordered w-full" autocomplete="current-password">
+      <button class="btn btn-primary">Masuk</button>
+    </form>
+  </div>
+{% endblock %}

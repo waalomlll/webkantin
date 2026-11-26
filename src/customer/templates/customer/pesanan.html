@@ -1,0 +1,21 @@
+{% extends "customer/_dasar.html" %}
+{% load kantin %}
+{% block title %}Pesanan saya — Kantin ITB{% endblock %}
+{% block content %}
+  <h1 class="text-2xl font-bold mb-4">Pesanan saya</h1>
+  <div class="space-y-3">
+    {% for p in daftar %}
+      <a href="{% url 'customer:pesanan_detail' p.pk %}" class="card bg-base-100 shadow-sm hover:shadow-md transition">
+        <div class="card-body flex-row items-center justify-between">
+          <div>
+            <div class="font-semibold">#{{ p.pk }} · {{ p.kedai.nama }}</div>
+            <div class="text-sm opacity-70">{{ p.dibuat|date:"d M Y H:i" }} · Meja {{ p.nomor_meja }} · {{ p.total|rupiah }}</div>
+          </div>
+          <span class="badge {% if p.status == 'siap' %}badge-success{% elif p.status == 'dibatalkan' %}badge-error{% else %}badge-primary{% endif %}">{{ p.get_status_display }}</span>
+        </div>
+      </a>
+    {% empty %}
+      <p class="opacity-70">Belum ada pesanan.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

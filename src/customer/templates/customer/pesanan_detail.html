@@ -1,0 +1,46 @@
+{% extends "customer/_dasar.html" %}
+{% load kantin %}
+{% block title %}Pesanan #{{ pesanan.pk }} — Kantin ITB{% endblock %}
+{% block content %}
+  <h1 class="text-2xl font-bold mb-1">Pesanan #{{ pesanan.pk }}</h1>
+  <p class="opacity-70 mb-4">{{ pesanan.kedai.nama }} · {{ pesanan.kedai.kantin.nama }} · Meja {{ pesanan.nomor_meja }}</p>
+
+  {% if pesanan.status == 'siap' %}
+    <div class="alert alert-success mb-4"><span>Pesananmu sudah siap! Silakan ambil di kedai.</span></div>
+  {% endif %}
+  {% if pesanan.status == 'dibatalkan' %}
+    <div class="alert alert-error mb-4"><span>Pesanan dibatalkan.{% if pesanan.dana_dikembalikan %} Dana dikembalikan.{% endif %}</span></div>
+  {% else %}
+    <ul class="steps w-full mb-6">
+      {% for l in langkah %}<li class="step {% if l.aktif %}step-primary{% endif %}">{{ l.label }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body gap-2">
+      {% for i in pesanan.item.all %}
+        <div class="flex justify-between"><span>{{ i.jumlah }} × {{ i.nama }}</span><span>{{ i.subtotal|rupiah }}</span></div>
+      {% endfor %}
+      <div class="divider my-1"></div>
+      <div class="flex justify-between font-bold"><span>Total</span><span>{{ pesanan.total|rupiah }}</span></div>
+      {% if pesanan.status == 'diterima' %}
+        <form method="post" action="{% url 'customer:pesanan_batal' pesanan.pk %}" class="mt-2">{% csrf_token %}
+          <button class="btn btn-error btn-outline btn-sm">Batalkan pesanan</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if pesanan.status != 'selesai' and pesanan.status != 'dibatalkan' %}
+    <script>
+      (function () {
+        var sekarang = "{{ pesanan.status }}";
+        setInterval(function () {
+          fetch("{% url 'customer:pesanan_status' pesanan.pk %}")
+            .then(function (r) { return r.json(); })
+            .then(function (d) { if (d.status !== sekarang) { location.reload(); } });
+        }, 3000);
+      })();
+    </script>
+  {% endif %}
+{% endblock %}

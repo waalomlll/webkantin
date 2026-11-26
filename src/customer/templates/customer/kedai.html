@@ -1,0 +1,21 @@
+{% extends "customer/_dasar.html" %}
+{% block title %}{{ kantin.nama }} — Kantin ITB{% endblock %}
+{% block content %}
+  <div class="breadcrumbs text-sm"><ul>
+    <li><a href="{% url 'customer:kantin' %}">Kantin</a></li><li>{{ kantin.nama }}</li>
+  </ul></div>
+  <h1 class="text-2xl font-bold mb-1">{{ kantin.emoji }} {{ kantin.nama }}</h1>
+  {% if meja %}<div class="badge badge-primary mb-4">Meja {{ meja }}</div>{% endif %}
+  <div class="grid gap-4 sm:grid-cols-2 mt-4">
+    {% for kd in daftar %}
+      <a href="{% url 'customer:menu' kd.pk %}" class="card bg-base-100 shadow-sm hover:shadow-md transition">
+        <div class="card-body">
+          <h2 class="card-title">{{ kd.nama }}</h2>
+          <p class="text-sm opacity-70">{{ kd.deskripsi }}</p>
+        </div>
+      </a>
+    {% empty %}
+      <p class="opacity-70">Belum ada kedai di kantin ini.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

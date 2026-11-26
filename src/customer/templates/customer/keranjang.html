@@ -1,0 +1,49 @@
+{% extends "customer/_dasar.html" %}
+{% load kantin %}
+{% block title %}Keranjang — Kantin ITB{% endblock %}
+{% block content %}
+  <h1 class="text-2xl font-bold mb-4">Keranjang</h1>
+  {% if baris %}
+    <p class="mb-4 opacity-70">Pesanan dari <strong>{{ kedai.nama }}</strong> · {{ kedai.kantin.nama }}</p>
+    <div class="card bg-base-100 shadow-sm">
+      <div class="card-body gap-3">
+        {% for b in baris %}
+          <div class="flex items-center gap-3">
+            <div class="text-3xl">{{ b.menu.emoji }}</div>
+            <div class="flex-1">
+              <div class="font-semibold">{{ b.menu.nama }}</div>
+              <div class="text-sm opacity-70">{{ b.menu.harga|rupiah }}</div>
+            </div>
+            <form method="post" class="flex items-center gap-2">{% csrf_token %}
+              <input type="hidden" name="aksi" value="ubah">
+              <input type="hidden" name="menu_id" value="{{ b.menu.pk }}">
+              <input type="number" name="jumlah" value="{{ b.jumlah }}" min="0" step="1" class="input input-bordered input-sm w-20" aria-label="Jumlah">
+              <button class="btn btn-sm">Ubah</button>
+            </form>
+            <div class="w-24 text-right font-semibold">{{ b.subtotal|rupiah }}</div>
+          </div>
+        {% endfor %}
+        <div class="divider my-1"></div>
+        <div class="flex justify-between text-lg font-bold"><span>Total</span><span>{{ total|rupiah }}</span></div>
+        <form method="post" class="flex flex-wrap items-end gap-3 mt-2">{% csrf_token %}
+          <input type="hidden" name="aksi" value="lanjut">
+          <label class="form-control">
+            <span class="label-text mb-1">Nomor meja</span>
+            <input type="number" name="nomor_meja" value="{{ meja }}" min="1" max="999" required class="input input-bordered w-32">
+          </label>
+          <button class="btn btn-primary flex-1">Lanjut ke pembayaran</button>
+        </form>
+        <form method="post">{% csrf_token %}
+          <input type="hidden" name="aksi" value="kosongkan">
+          <button class="btn btn-ghost btn-sm">Kosongkan keranjang</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <div class="card bg-base-100 shadow-sm"><div class="card-body items-center text-center">
+      <div class="text-5xl">🛒</div>
+      <p>Keranjangmu masih kosong.</p>
+      <a href="{% url 'customer:kantin' %}" class="btn btn-primary btn-sm">Pilih kantin</a>
+    </div></div>
+  {% endif %}
+{% endblock %}

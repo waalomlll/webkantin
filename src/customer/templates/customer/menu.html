@@ -1,0 +1,38 @@
+{% extends "customer/_dasar.html" %}
+{% load kantin %}
+{% block title %}{{ kedai.nama }} — Kantin ITB{% endblock %}
+{% block content %}
+  <div class="breadcrumbs text-sm"><ul>
+    <li><a href="{% url 'customer:kantin' %}">Kantin</a></li>
+    <li><a href="{% url 'customer:kedai' kedai.kantin.kode %}">{{ kedai.kantin.nama }}</a></li>
+    <li>{{ kedai.nama }}</li>
+  </ul></div>
+  <h1 class="text-2xl font-bold mb-4">{{ kedai.nama }}</h1>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for m in daftar %}
+      <div class="card bg-base-100 shadow-sm {% if not m.tersedia %}opacity-60 grayscale{% endif %}">
+        <figure class="h-36 bg-base-200">
+          {% if m.foto %}<img src="{{ m.foto.url }}" alt="{{ m.nama }}" class="h-full w-full object-cover">
+          {% else %}<span class="text-6xl">{{ m.emoji }}</span>{% endif %}
+        </figure>
+        <div class="card-body p-4">
+          <h2 class="card-title text-base">{{ m.nama }}
+            {% if not m.tersedia %}<span class="badge badge-neutral">HABIS</span>{% endif %}
+          </h2>
+          <p class="font-semibold text-primary">{{ m.harga|rupiah }}</p>
+          {% if m.tersedia %}
+            <form method="post" class="flex gap-2 mt-2">{% csrf_token %}
+              <input type="hidden" name="menu_id" value="{{ m.pk }}">
+              <input type="number" name="jumlah" value="1" min="1" step="1" class="input input-bordered input-sm w-20" aria-label="Jumlah">
+              <button class="btn btn-primary btn-sm flex-1">Tambah</button>
+            </form>
+          {% else %}
+            <button class="btn btn-sm btn-disabled mt-2" disabled>Tidak tersedia</button>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p class="opacity-70">Belum ada menu.</p>
+    {% endfor %}
+  </div>
+{% endblock %}
